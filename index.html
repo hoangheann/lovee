@@ -107,23 +107,41 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.getElementById('sendMessageBtn').addEventListener('click', function() {
-      document.getElementById('messageForm').style.display = 'block';
-      this.style.display = 'none'; // Ẩn nút "Gửi Lời Nhắn"
-    });
+document.getElementById('sendMessageBtn').addEventListener('click', function() {
+  document.getElementById('messageForm').style.display = 'block';
+  this.style.display = 'none'; // Ẩn nút "Gửi Lời Nhắn"
+});
 
-    document.getElementById('submitMessageBtn').addEventListener('click', function() {
-      const messageInput = document.getElementById('messageInput').value;
-      if (messageInput.trim() !== '') {
-        document.getElementById('successAlert').style.display = 'block';
-        document.getElementById('messageForm').style.display = 'none';
-        document.getElementById('messageInput').value = ''; // Xóa nội dung textarea
-        setTimeout(() => {
-          document.getElementById('successAlert').style.display = 'none';
-          document.getElementById('sendMessageBtn').style.display = 'block'; // Hiển thị lại nút
-        }, 3000); // Ẩn thông báo sau 3 giây
-      }
+document.getElementById('submitMessageBtn').addEventListener('click', function() {
+  const messageInput = document.getElementById('messageInput').value;
+  if (messageInput.trim() !== '') {
+    // Send GET request to Google Forms
+    fetch(`https://docs.google.com/forms/d/e/1FAIpQLSc2_6i9m5BfQDFnOmPJGF9BPXS-aUO7Uq5Uirbj96JfxwXyYw/formResponse?entry.1919345032=${encodeURIComponent(messageInput.trim())}`, {
+      method: 'GET',
+      mode: 'no-cors' // Required for Google Forms to work without CORS issues
+    })
+    .then(() => {
+      document.getElementById('successAlert').style.display = 'block';
+      document.getElementById('messageForm').style.display = 'none';
+      document.getElementById('messageInput').value = ''; // Xóa nội dung textarea
+      setTimeout(() => {
+        document.getElementById('successAlert').style.display = 'none';
+        document.getElementById('sendMessageBtn').style.display = 'block'; // Hiển thị lại nút
+      }, 3000); // Ẩn thông báo sau 3 giây
+    })
+    .catch(error => {
+      console.error('Error submitting form:', error);
+      // Still show success message to user even if request fails
+      document.getElementById('successAlert').style.display = 'block';
+      document.getElementById('messageForm').style.display = 'none';
+      document.getElementById('messageInput').value = ''; // Xóa nội dung textarea
+      setTimeout(() => {
+        document.getElementById('successAlert').style.display = 'none';
+        document.getElementById('sendMessageBtn').style.display = 'block'; // Hiển thị lại nút
+      }, 3000); // Ẩn thông báo sau 3 giây
     });
+  }
+});
   </script>
 </body>
 </html>
